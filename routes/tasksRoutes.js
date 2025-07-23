@@ -10,7 +10,7 @@ router.use(cors(corsOptions)); //.use() Aplica a todas as rotas
 
 router.get("/all", (req, res)=>{
 
-    res.status(200).json(JSON.stringify(tasks.getAllTasks()));
+    res.status(200).json(tasks.getAllTasks());
 
 });
 
