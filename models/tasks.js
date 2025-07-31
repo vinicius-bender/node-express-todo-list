@@ -2,11 +2,11 @@ module.exports = {
 
     tasks: [
         {
-            id: "",
-            title: "",
-            description: "",
-            creationDate: "",
-            expireDate: ""
+            id: "1",
+            title: "Teste 01",
+            description: "Descrição 1",
+            creationDate: "07/31/2025",
+            expireDate: "08/31/2025"
         }
     ],
 
