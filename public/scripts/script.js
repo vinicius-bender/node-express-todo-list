@@ -1,35 +1,47 @@
 async function getAllTasks() {
+    const url = "http://192.168.3.103:3000/tasks/all";
+    const allTasksDiv = document.getElementById("tasks");
 
-        const url = "http://192.168.3.103:3000/tasks/all";
-        
-        const allTasksDiv = document.getElementById("tasks");
-        
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
-            }
-
-            const tasks = await response.json();
-
-            allTasksDiv.innerHTML = "";
-
-            tasks.forEach(element => {
-                allTasksDiv.innerHTML += `
-                    <div class="task">
-                        <p class="title">${element.title}</p>
-                        <p class="Description">${element.description}</p>
-                        <p class="createDate">${element.creationDate}</p>
-                        <p class="expireDate">${element.expireDate}</p>
-                        <button class="deleteButton" id="delButton" >Deletar</button>
-                        <button class="editButton" id="edButton">Editar</button>
-                    </div>
-                `;
-            });
-
-        } catch (error) {
-            console.error(error.message);
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
         }
+
+        const tasks = await response.json();
+        allTasksDiv.innerHTML = "";
+
+        tasks.forEach(element => {
+            allTasksDiv.innerHTML += `
+                <div class="task">
+                    <p class="taskId">${element.id}</p>
+                    <p class="title">${element.title}</p>
+                    <p class="description">${element.description}</p>
+                    <p class="createDate">${element.creationDate}</p>
+                    <p class="expireDate">${element.expireDate}</p>
+                    <button class="deleteButton" data-id="${element.id}">Deletar</button>
+                    <button class="editButton" data-id="${element.id}">Editar</button>
+                </div>
+            `;
+        });
+
+        document.querySelectorAll(".deleteButton").forEach(button => {
+            button.addEventListener("click", async () => {
+                const id = button.getAttribute("data-id");
+                await deleteTask(id);
+            });
+        });
+
+        // document.querySelectorAll(".editButton").forEach(button => {
+        //     button.addEventListener("click", async () => {
+        //         const id = button.getAttribute("data-id");
+        //         await updateTask(id);
+        //     });
+        // });
+
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
 function createTask() {
@@ -40,7 +52,7 @@ function createTask() {
         const description = document.getElementById("descriptionInput").value;
         const expireDate = document.getElementById("dateInput").value;
         const url = "http://192.168.3.103:3000/tasks/new";
-        
+
         try {
             const response = await fetch(url, {
                 method: "POST",
@@ -57,10 +69,10 @@ function createTask() {
 
             const successText = await response.text();
             alert(successText);
-            
-            title.value = "";
-            description.value = "";
-            expireDate.value = "";
+
+            document.getElementById("titleInput").value = "";
+            document.getElementById("descriptionInput").value = "";
+            document.getElementById("dateInput").value = "";
 
             await getAllTasks();
 
@@ -70,22 +82,34 @@ function createTask() {
     });
 }
 
-function updateTask() {
+async function deleteTask(taskId) {
+    const url = `http://192.168.3.103:3000/tasks/delete/${taskId}`;
 
+    try {
+        const response = await fetch(url, {
+            method: "DELETE"
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || `Erro: status ${response.status}`);
+        }
+
+        const successText = await response.text();
+        alert(successText);
+
+        await getAllTasks();
+
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
-function deleteTask() {
-
-    const delButton = document.getElementById("deleteButton");
-    const editButton = document.getElementById("edButton");
-
+function updateTask(taskId) {
+    
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
     getAllTasks();
     createTask();
-    updateTask();
-    deleteTask();
-
 });

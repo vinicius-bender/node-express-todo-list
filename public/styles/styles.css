@@ -41,6 +41,10 @@ input, button{
     gap: 10px; */
 }
 
+.taskId{
+    display: none;
+}
+
 .deleteButton{
     width: 100px;
     padding: 10px;

@@ -40,7 +40,12 @@ module.exports = {
     },
 
     deleteTask(id) {
-        this.tasks = this.tasks.filter(task => task.id !== id);
+        const index = this.tasks.findIndex(task => String(task.id) === String(id));
+        if (index === -1) {
+            throw new Error(`Task com ID ${id} não encontrada.`);
+        }
+
+        this.tasks.splice(index, 1);
     },
 
     generateId() {
